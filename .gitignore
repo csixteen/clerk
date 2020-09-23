@@ -1,0 +1,4 @@
+clerk-cli
+.clerk.db*
+.*.swp
+*~
