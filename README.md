@@ -11,6 +11,49 @@ Clerk is a simple personal assistant for the command-line. It allows you to mana
 - Delete a task: `clerk-cli task del <name | id>`
 - Mark a task as completed: `clerk-cli task done <name | id>`
 
+### Notes
+TODO
+
+### Search
+TODO
+
+# Dependencies
+
+Clerk relies uses SQLite3 to store information. Most likely you'll have it already installed, but if you don't, then that's your only dependency.
+
+# Installing
+
+```
+$ go get github.com/csixteen/clerk/cmd/clerk
+```
+
+# Building
+
+The project uses Go modules, so you'll need a version of Go more recent than [1.11](https://blog.golang.org/using-go-modules).
+
+```
+$ make bin
+go build -o clerk-cli cmd/clerk/*.go
+```
+
+# Testing
+
+```
+$ make test
+go test -v pkg/actions/*.go
+=== RUN   TestListTasks
+--- PASS: TestListTasks (0.00s)
+=== RUN   TestAddTask
+--- PASS: TestAddTask (0.00s)
+=== RUN   TestEditTask
+--- PASS: TestEditTask (0.00s)
+=== RUN   TestDeleteTask
+--- PASS: TestDeleteTask (0.00s)
+=== RUN   TestCompleteTask
+--- PASS: TestCompleteTask (0.00s)
+...
+```
+
 # References
 - [go-sqlite3](https://github.com/mattn/go-sqlite3)
 - [Package go-sqlite3](https://pkg.go.dev/github.com/mattn/go-sqlite3)
