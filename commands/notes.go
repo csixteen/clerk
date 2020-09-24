@@ -27,7 +27,7 @@ import (
 	"time"
 
 	u "github.com/csixteen/clerk/cmd/clerk/util"
-	"github.com/csixteen/clerk/pkg/actions"
+	"github.com/csixteen/clerk/pkg/models"
 	"github.com/spf13/cobra"
 )
 
@@ -56,7 +56,7 @@ func listNotes() *cobra.Command {
 		Aliases: []string{"ls"},
 		Args:    cobra.NoArgs,
 		Run: func(cmd *cobra.Command, args []string) {
-			notes, err := actions.ListNotes(database)
+			notes, err := models.ListNotes(database)
 			if err != nil {
 				// TODO - log
 				return
@@ -76,7 +76,7 @@ func addNote() *cobra.Command {
 		Aliases: []string{"a"},
 		Args:    cobra.MinimumNArgs(2),
 		Run: func(cmd *cobra.Command, args []string) {
-			err := actions.AddNote(
+			err := models.AddNote(
 				database,
 				args[0],
 				strings.Join(args[1:], " "),
@@ -98,7 +98,7 @@ func appendNote() *cobra.Command {
 		Aliases: []string{"app"},
 		Args:    cobra.MinimumNArgs(2),
 		Run: func(cmd *cobra.Command, args []string) {
-			err := actions.AppendNote(
+			err := models.AppendNote(
 				database,
 				args[0],
 				strings.Join(args[1:], " "),
@@ -119,7 +119,7 @@ func showNote() *cobra.Command {
 		Aliases: []string{"sh"},
 		Args:    cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			n, err := actions.GetNote(database, args[0])
+			n, err := models.GetNote(database, args[0])
 			if err != nil {
 				//TODO - log
 				return
@@ -138,7 +138,7 @@ func deleteNote() *cobra.Command {
 		Aliases: []string{"d"},
 		Args:    cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			err := actions.DeleteNote(database, args[0])
+			err := models.DeleteNote(database, args[0])
 			if err != nil {
 				//TODO - log
 				return

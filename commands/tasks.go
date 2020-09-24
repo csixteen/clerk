@@ -27,7 +27,7 @@ import (
 	"time"
 
 	u "github.com/csixteen/clerk/cmd/clerk/util"
-	"github.com/csixteen/clerk/pkg/actions"
+	"github.com/csixteen/clerk/pkg/models"
 	"github.com/spf13/cobra"
 )
 
@@ -56,7 +56,7 @@ func listTasks() *cobra.Command {
 		Aliases: []string{"ls"},
 		Args:    cobra.NoArgs,
 		Run: func(cmd *cobra.Command, args []string) {
-			tasks, err := actions.ListTasks(database)
+			tasks, err := models.ListTasks(database)
 			if err != nil {
 				// TODO - log
 				return
@@ -76,7 +76,7 @@ func addTask() *cobra.Command {
 		Aliases: []string{"a"},
 		Args:    cobra.MinimumNArgs(2),
 		Run: func(cmd *cobra.Command, args []string) {
-			err := actions.AddTask(
+			err := models.AddTask(
 				database,
 				args[0],
 				strings.Join(args[1:], " "),
@@ -98,7 +98,7 @@ func editTask() *cobra.Command {
 		Aliases: []string{"e"},
 		Args:    cobra.MinimumNArgs(2),
 		Run: func(cmd *cobra.Command, args []string) {
-			err := actions.EditTask(
+			err := models.EditTask(
 				database,
 				args[0],
 				strings.Join(args[1:], " "),
@@ -119,7 +119,7 @@ func deleteTask() *cobra.Command {
 		Aliases: []string{"d"},
 		Args:    cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			err := actions.DeleteTask(database, args[0])
+			err := models.DeleteTask(database, args[0])
 			if err != nil {
 				//TODO - log
 				return
@@ -135,7 +135,7 @@ func completeTask() *cobra.Command {
 		Long:  "Marks an existing task as completed given its name or id. The id should be prefixed by a '#'",
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			err := actions.CompleteTask(database, args[0], time.Now())
+			err := models.CompleteTask(database, args[0], time.Now())
 			if err != nil {
 				//TODO - log
 				return

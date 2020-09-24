@@ -49,26 +49,25 @@ func init() {
 	}
 
 	addCommands()
-
-	// More stuff to come
 }
 
 func addCommands() {
 	RootCmd.AddCommand(Notes())
 	RootCmd.AddCommand(Tasks())
+	RootCmd.AddCommand(Search())
 }
 
 func Execute() {
+	defer database.Close()
 	if err := RootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(-1)
 	}
-
-	database.Close()
 }
 
-// SetupDatabase creates a database with the necessary tables,
-// if one doesn't exist yet. It will return a handle to it.
+//-------------------------------------------
+//         Database related stuff
+
 func setupDatabase() (*sql.DB, error) {
 	var err error
 
