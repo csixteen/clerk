@@ -1,5 +1,5 @@
 # clerk
-Clerk is a simple personal assistant for the command-line. It allows you to manage notes and tasks in a simple way and search for stuff in your notes and tasks. If it sounds too simple, it's because it is. I prefer to have a single CLI tool that allows me to easily store notes and search them later instead of managing text files and have them scattered all over the place.
+Clerk started as a learning and practising exercise, but surprisingly enough I now use it on a regular basis. Clerk is supposed to be a simple personal assistant for the command-line. It allows you to manage notes and tasks in a simple way and search for stuff in your notes and tasks. If it sounds simple, that's because it **is** simple. My objective was to create a tool that helps me get shit done and retrieve information quickly, not something that I need to spend too much time tweaking or remembering how to use.
 
 # Functionalities
 
@@ -12,10 +12,36 @@ Clerk is a simple personal assistant for the command-line. It allows you to mana
 - Mark a task as completed: `clerk-cli task done <name | id>`
 
 ### Notes
-TODO
+
+- Add a new note: `clerk-cli note add <name> <contents>...`
+- List existing notes: `clerk-cli note list`
+- Append contents to a note: `clerk-cli note append <name | id> <more contents>...`
+- Show note contents: `clerk-cli note show <name | id>`
+- Delete note: `clerk-cli note del <name | id>`
 
 ### Search
 TODO
+
+## Aliases
+
+Most of the commands and subcommands have aliases, so that you don't need to type that much (you'll get shit done even faster...!!).
+
+### Examples
+
+```
+# List notes
+$ clerk-cli n ls
+
+# Add new note called "test" with contents "some contents"
+$ clerk-cli n a test some contents
+
+# Show the contents of the newly added note
+$ clerk-cli n sh test
+- id: 1 | name: test | created_at: 0001-01-01 00:00:00
+  Contents: some contents
+```
+
+Check the commands and subcommands' help to find their aliases: `clerk-cli <command> --help`.
 
 # Dependencies
 
