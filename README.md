@@ -1,7 +1,8 @@
 # clerk
+
 Clerk started as a learning and practising exercise, but surprisingly enough I now use it on a regular basis. Clerk is supposed to be a simple personal assistant for the command-line. It allows you to manage notes and tasks in a simple way and search for stuff in your notes and tasks. If it sounds simple, that's because it **is** simple. My objective was to create a tool that helps me get shit done and retrieve information quickly, not something that I need to spend too much time tweaking or remembering how to use.
 
-# Functionalities
+# How to use
 
 ### Tasks
 
@@ -82,7 +83,6 @@ go test -v pkg/actions/*.go
 
 # References
 - [go-sqlite3](https://github.com/mattn/go-sqlite3)
-- [Package go-sqlite3](https://pkg.go.dev/github.com/mattn/go-sqlite3)
 - [Unit Test (SQL) in Golang](https://medium.com/easyread/unit-test-sql-in-golang-5af19075e68e)
 - [SQL As Understood by SQLite](https://sqlite.org/lang.html)
 - [Learn Go with Tests](https://quii.gitbook.io/learn-go-with-tests/)
