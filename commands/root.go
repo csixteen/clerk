@@ -30,8 +30,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// This is needed for the `ON DELETE CASCADE` constraint.
-const dbFile = ".clerk.db?_foreign_keys=true"
+const dbFile = ".clerk.db"
 
 var (
 	database *sql.DB
@@ -79,7 +78,10 @@ func setupDatabase() (*sql.DB, error) {
 		file.Close()
 	}
 
-	db, _ := sql.Open("sqlite3", dbFile)
+	db, _ := sql.Open(
+		"sqlite3",
+		fmt.Sprintf("%s?_foreign_keys=true", dbFile),
+	)
 	err = createTables(db)
 	if err != nil {
 		return nil, err
