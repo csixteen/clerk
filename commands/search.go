@@ -1,8 +1,8 @@
 package commands
 
 import (
-	"fmt"
-
+	u "github.com/csixteen/clerk/cmd/clerk/util"
+	"github.com/csixteen/clerk/pkg/actions"
 	"github.com/spf13/cobra"
 )
 
@@ -14,7 +14,15 @@ func Search() *cobra.Command {
 		Aliases: []string{"s"},
 		Args:    cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println(args)
+			results, err := actions.Search(database, args)
+			if err != nil {
+				//TODO - log
+				return
+			}
+
+			for _, res := range results {
+				u.PrintColor(res.String(), u.ColorYellow)
+			}
 		},
 	}
 }
