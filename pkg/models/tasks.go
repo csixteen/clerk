@@ -30,22 +30,38 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+// TaskModel struct representation of a row in `tasks` table
 type TaskModel struct {
-	id          string
-	name        string
-	contents    string
-	createdAt   time.Time
-	completedAt time.Time
+	Id          string
+	Name        string
+	Contents    string
+	CreatedAt   time.Time
+	CompletedAt time.Time
 }
 
+// String returns a printable representation of a Task
 func (t *TaskModel) String() string {
+	var createdAtStr string
+	if (t.CreatedAt == time.Time{}) {
+		createdAtStr = ""
+	} else {
+		createdAtStr = fmt.Sprintf(
+			" | created_at: %s",
+			t.CreatedAt.Format(dateLayout),
+		)
+	}
+
 	return fmt.Sprintf(
-		"- id: %s | name: %s | created_at: %s\n  Contents: %s\n",
-		t.id,
-		t.name,
-		t.createdAt.Format(dateLayout),
-		t.contents,
+		"- id: %s | name: %s%s\n  Contents: %s\n",
+		t.Id,
+		t.Name,
+		createdAtStr,
+		t.Contents,
 	)
+}
+
+func (t *TaskModel) Type() string {
+	return "task"
 }
 
 // ListTask returns a slice of TaskModels ordered by `id`
@@ -63,16 +79,16 @@ func ListTasks(db *sql.DB) ([]*TaskModel, error) {
 	for rows.Next() {
 		var createdAt, completedAt string
 		t := &TaskModel{}
-		err = rows.Scan(&t.id, &t.name, &t.contents, &createdAt, &completedAt)
+		err = rows.Scan(&t.Id, &t.Name, &t.Contents, &createdAt, &completedAt)
 		if err != nil {
 			return nil, err
 		}
 
 		cr, _ := time.Parse(dateLayout, createdAt)
-		t.createdAt = cr
+		t.CreatedAt = cr
 		co, coErr := time.Parse(dateLayout, completedAt)
 		if coErr == nil {
-			t.completedAt = co
+			t.CompletedAt = co
 		}
 
 		res = append(res, t)

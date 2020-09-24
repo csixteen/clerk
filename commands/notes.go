@@ -55,16 +55,17 @@ func listNotes() *cobra.Command {
 		Short:   "Lists all the existing notes",
 		Aliases: []string{"ls"},
 		Args:    cobra.NoArgs,
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			notes, err := models.ListNotes(database)
 			if err != nil {
-				// TODO - log
-				return
+				return err
 			}
 
 			for _, n := range notes {
-				u.PrintColor(n.String(), u.ColorPurple)
+				u.PrintColor(n.String(), u.ColorCyan)
 			}
+
+			return nil
 		},
 	}
 }
@@ -75,17 +76,15 @@ func addNote() *cobra.Command {
 		Short:   "Adds a new note",
 		Aliases: []string{"a"},
 		Args:    cobra.MinimumNArgs(2),
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			err := models.AddNote(
 				database,
 				args[0],
 				strings.Join(args[1:], " "),
 				time.Now(),
 			)
-			if err != nil {
-				//TODO - log
-				return
-			}
+
+			return err
 		},
 	}
 }
@@ -97,16 +96,14 @@ func appendNote() *cobra.Command {
 		Long:    "Appends contents to an existing note, given its name or id. The id should be prefixed by a '#'",
 		Aliases: []string{"app"},
 		Args:    cobra.MinimumNArgs(2),
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			err := models.AppendNote(
 				database,
 				args[0],
 				strings.Join(args[1:], " "),
 			)
-			if err != nil {
-				//TODO - log
-				return
-			}
+
+			return err
 		},
 	}
 }
@@ -118,14 +115,15 @@ func showNote() *cobra.Command {
 		Long:    "Shows the contents of a note given its name or id. The id should be prefixed by a '#'",
 		Aliases: []string{"sh"},
 		Args:    cobra.ExactArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			n, err := models.GetNote(database, args[0])
 			if err != nil {
-				//TODO - log
-				return
+				return err
 			}
 
-			u.PrintColor(n.String(), u.ColorPurple)
+			u.PrintColor(n.String(), u.ColorCyan)
+
+			return nil
 		},
 	}
 }
@@ -137,12 +135,8 @@ func deleteNote() *cobra.Command {
 		Long:    "Deletes an existing note given its name or id. The id should be prefixed by a '#'",
 		Aliases: []string{"d"},
 		Args:    cobra.ExactArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
-			err := models.DeleteNote(database, args[0])
-			if err != nil {
-				//TODO - log
-				return
-			}
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return models.DeleteNote(database, args[0])
 		},
 	}
 }

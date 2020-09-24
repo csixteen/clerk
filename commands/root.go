@@ -26,15 +26,16 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
+	"path"
 
 	"github.com/spf13/cobra"
 )
 
-const dbFile = ".clerk.db"
-
 var (
 	database *sql.DB
-	RootCmd  = &cobra.Command{
+	dbFile   string
+
+	RootCmd = &cobra.Command{
 		Use:   "clerk",
 		Short: "clerk is your command-line personal Jarvis.",
 	}
@@ -42,6 +43,13 @@ var (
 
 func init() {
 	var err error
+
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		panic(err)
+	}
+	dbFile = path.Join(homeDir, ".clerk.db")
+
 	database, err = setupDatabase()
 	if err != nil {
 		panic(err)

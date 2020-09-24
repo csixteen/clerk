@@ -55,16 +55,17 @@ func listTasks() *cobra.Command {
 		Short:   "Lists all the existing tasks",
 		Aliases: []string{"ls"},
 		Args:    cobra.NoArgs,
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			tasks, err := models.ListTasks(database)
 			if err != nil {
-				// TODO - log
-				return
+				return err
 			}
 
 			for _, t := range tasks {
-				u.PrintColor(t.String(), u.ColorPurple)
+				u.PrintColor(t.String(), u.ColorYellow)
 			}
+
+			return nil
 		},
 	}
 }
@@ -75,17 +76,15 @@ func addTask() *cobra.Command {
 		Short:   "Adds a new task",
 		Aliases: []string{"a"},
 		Args:    cobra.MinimumNArgs(2),
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			err := models.AddTask(
 				database,
 				args[0],
 				strings.Join(args[1:], " "),
 				time.Now(),
 			)
-			if err != nil {
-				//TODO - log
-				return
-			}
+
+			return err
 		},
 	}
 }
@@ -97,16 +96,14 @@ func editTask() *cobra.Command {
 		Long:    "Replaces the contents of an existing task given its name or id. The id should be prefixed by a '#'",
 		Aliases: []string{"e"},
 		Args:    cobra.MinimumNArgs(2),
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			err := models.EditTask(
 				database,
 				args[0],
 				strings.Join(args[1:], " "),
 			)
-			if err != nil {
-				//TODO - log
-				return
-			}
+
+			return err
 		},
 	}
 }
@@ -118,12 +115,8 @@ func deleteTask() *cobra.Command {
 		Long:    "Deletes an existing task given its name or id. The id should be prefixed by a '#'",
 		Aliases: []string{"d"},
 		Args:    cobra.ExactArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
-			err := models.DeleteTask(database, args[0])
-			if err != nil {
-				//TODO - log
-				return
-			}
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return models.DeleteTask(database, args[0])
 		},
 	}
 }
@@ -134,12 +127,8 @@ func completeTask() *cobra.Command {
 		Short: "Marks an existing task as completed",
 		Long:  "Marks an existing task as completed given its name or id. The id should be prefixed by a '#'",
 		Args:  cobra.ExactArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
-			err := models.CompleteTask(database, args[0], time.Now())
-			if err != nil {
-				//TODO - log
-				return
-			}
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return models.CompleteTask(database, args[0], time.Now())
 		},
 	}
 }

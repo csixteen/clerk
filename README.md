@@ -21,7 +21,16 @@ Clerk started as a learning and practising exercise, but surprisingly enough I n
 - Delete note: `clerk-cli note del <name | id>`
 
 ### Search
-TODO
+
+- `clerk-cli search|s <query>...`
+
+```
+$ clerk-cli s clerk
+note
+- id: 1 | name: clerk
+  Contents: add unit tests
+
+```
 
 ## Aliases
 
@@ -80,6 +89,21 @@ go test -v pkg/actions/*.go
 --- PASS: TestCompleteTask (0.00s)
 ...
 ```
+
+# Limitations and Caveats
+
+I'm not using **Full Text Search** feature from SQLite, as it requires the module `fts5` to be avavailable. As such, I'm executing simple `SELECT` queries on `notes` and `tasks` tables. This is ok because I didn't intend to perform ultra complex search queries anyways. Also, it doesn't have any noticeable impact on performance.
+
+# TODO
+- Comment the code a bit better.
+- Increase code coverage.
+- Don't show *completed* tasks with `task list`, unless flag `--all` is passed.
+- Do some house cleaning in general.
+- Better error handling, maybe?
+
+# Contributing
+
+Yes, please. If you find a bug or want to improve the tool in general, feel free to submit a Pull-request.
 
 # References
 - [go-sqlite3](https://github.com/mattn/go-sqlite3)

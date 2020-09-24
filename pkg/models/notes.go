@@ -32,28 +32,42 @@ import (
 )
 
 type NoteModel struct {
-	id        string
-	name      string
-	contents  []string
-	createdAt time.Time
+	Id        string
+	Name      string
+	Contents  []string
+	CreatedAt time.Time
 }
 
 func (n *NoteModel) String() string {
-	s := "- id: %s | name: %s | created_at: %s%s\n"
+	s := "- id: %s | name: %s%s%s\n"
+
+	var createdAtStr string
+	if (n.CreatedAt == time.Time{}) {
+		createdAtStr = ""
+	} else {
+		createdAtStr = fmt.Sprintf(
+			" | created_at: %s",
+			n.CreatedAt.Format(dateLayout),
+		)
+	}
 
 	var c strings.Builder
-	if len(n.contents) > 0 {
+	if len(n.Contents) > 0 {
 		c.WriteString("\n  Contents: ")
-		c.WriteString(strings.Join(n.contents, "; "))
+		c.WriteString(strings.Join(n.Contents, "; "))
 	}
 
 	return fmt.Sprintf(
 		s,
-		n.id,
-		n.name,
-		n.createdAt.Format(dateLayout),
+		n.Id,
+		n.Name,
+		createdAtStr,
 		c.String(),
 	)
+}
+
+func (n *NoteModel) Type() string {
+	return "note"
 }
 
 func ListNotes(db *sql.DB) ([]*NoteModel, error) {
@@ -70,13 +84,13 @@ func ListNotes(db *sql.DB) ([]*NoteModel, error) {
 	for rows.Next() {
 		var createdAt string
 		n := &NoteModel{}
-		err = rows.Scan(&n.id, &n.name, &createdAt)
+		err = rows.Scan(&n.Id, &n.Name, &createdAt)
 		if err != nil {
 			return nil, err
 		}
 
 		cr, _ := time.Parse(dateLayout, createdAt)
-		n.createdAt = cr
+		n.CreatedAt = cr
 
 		res = append(res, n)
 	}
@@ -93,16 +107,16 @@ func GetNote(db *sql.DB, note string) (*NoteModel, error) {
 	row := db.QueryRow(noteMetadataQuery, id)
 	n := new(NoteModel)
 	var createdAt string
-	err := row.Scan(&n.id, &n.name, &createdAt)
+	err := row.Scan(&n.Id, &n.Name, &createdAt)
 	if err != nil {
 		return nil, err
 	}
 
 	cr, _ := time.Parse(dateLayout, createdAt)
-	n.createdAt = cr
+	n.CreatedAt = cr
 
 	noteContentsQuery := `SELECT contents FROM notes_contents WHERE note_id = ?`
-	rows, err := db.Query(noteContentsQuery, n.id)
+	rows, err := db.Query(noteContentsQuery, n.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -115,7 +129,7 @@ func GetNote(db *sql.DB, note string) (*NoteModel, error) {
 			return nil, err
 		}
 
-		n.contents = append(n.contents, contents)
+		n.Contents = append(n.Contents, contents)
 	}
 
 	return n, nil
