@@ -37,7 +37,7 @@ $ clerk-cli n a test some contents
 
 # Show the contents of the newly added note
 $ clerk-cli n sh test
-- id: 1 | name: test | created_at: 0001-01-01 00:00:00
+- id: 1 | name: test | created_at: 2020-09-24 08:10:10
   Contents: some contents
 ```
 

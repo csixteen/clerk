@@ -86,13 +86,20 @@ func ListNotes(db *sql.DB) ([]*NoteModel, error) {
 
 func GetNote(db *sql.DB, note string) (*NoteModel, error) {
 	field, id := getIdFieldAndValue(note)
-	noteMetadataQuery := fmt.Sprintf(`SELECT id, name FROM notes WHERE %s = ?`, field)
+	noteMetadataQuery := fmt.Sprintf(
+		`SELECT id, name, created_at FROM notes WHERE %s = ?`,
+		field,
+	)
 	row := db.QueryRow(noteMetadataQuery, id)
 	n := new(NoteModel)
-	err := row.Scan(&n.id, &n.name)
+	var createdAt string
+	err := row.Scan(&n.id, &n.name, &createdAt)
 	if err != nil {
 		return nil, err
 	}
+
+	cr, _ := time.Parse(dateLayout, createdAt)
+	n.createdAt = cr
 
 	noteContentsQuery := `SELECT contents FROM notes_contents WHERE note_id = ?`
 	rows, err := db.Query(noteContentsQuery, n.id)
