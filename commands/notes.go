@@ -77,7 +77,7 @@ func addNote() *cobra.Command {
 		Aliases: []string{"a"},
 		Args:    cobra.MinimumNArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			err := models.AddNote(
+			_, err := models.AddNote(
 				database,
 				args[0],
 				strings.Join(args[1:], " "),

@@ -77,7 +77,7 @@ func addTask() *cobra.Command {
 		Aliases: []string{"a"},
 		Args:    cobra.MinimumNArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			err := models.AddTask(
+			_, err := models.AddTask(
 				database,
 				args[0],
 				strings.Join(args[1:], " "),

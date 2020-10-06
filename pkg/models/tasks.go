@@ -26,17 +26,15 @@ import (
 	"database/sql"
 	"fmt"
 	"time"
-
-	_ "github.com/mattn/go-sqlite3"
 )
 
 // TaskModel struct representation of a row in `tasks` table
 type TaskModel struct {
-	Id          string
-	Name        string
-	Contents    string
-	CreatedAt   time.Time
-	CompletedAt time.Time
+	Id          string    `json:"id"`
+	Name        string    `json:"name"`
+	Contents    string    `json:"contents"`
+	CreatedAt   time.Time `json:"created_at"`
+	CompletedAt time.Time `json:"completed_at"`
 }
 
 // String returns a printable representation of a Task
@@ -98,16 +96,19 @@ func ListTasks(db *sql.DB) ([]*TaskModel, error) {
 }
 
 // AddTask adds a new task given a name, its contents and creation time
-func AddTask(db *sql.DB, name string, contents string, t time.Time) error {
+func AddTask(db *sql.DB, name string, contents string, t time.Time) (int64, error) {
 	insertQuery := `INSERT INTO tasks(name, contents, created_at) VALUES (?, ?, ?)`
 	stmt, err := db.Prepare(insertQuery)
 	if err != nil {
-		return err
+		return -1, err
 	}
 
-	_, err = stmt.Exec(name, contents, t.Format(dateLayout))
+	res, err := stmt.Exec(name, contents, t.Format(dateLayout))
+	if err != nil {
+		return -1, err
+	}
 
-	return err
+	return res.LastInsertId()
 }
 
 // EditTask sets the contents of a task

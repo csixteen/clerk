@@ -95,6 +95,7 @@ go test -v pkg/actions/*.go
 I'm not using **Full Text Search** feature from SQLite, as it requires the module `fts5` to be avavailable. As such, I'm executing simple `SELECT` queries on `notes` and `tasks` tables. This is ok because I didn't intend to perform ultra complex search queries anyways. Also, it doesn't have any noticeable impact on performance.
 
 # TODO
+- Refactor the code. Things became a bit messy since I've introduced the `clerk-server`.
 - Comment the code a bit better.
 - Increase code coverage.
 - Don't show *completed* tasks with `task list`, unless flag `--all` is passed.

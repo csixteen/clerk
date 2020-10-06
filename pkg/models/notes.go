@@ -27,15 +27,13 @@ import (
 	"fmt"
 	"strings"
 	"time"
-
-	_ "github.com/mattn/go-sqlite3"
 )
 
 type NoteModel struct {
-	Id        string
-	Name      string
-	Contents  []string
-	CreatedAt time.Time
+	Id        string    `json:"idd"`
+	Name      string    `json:"name"`
+	Contents  []string  `json:"contents"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 func (n *NoteModel) String() string {
@@ -135,32 +133,32 @@ func GetNote(db *sql.DB, note string) (*NoteModel, error) {
 	return n, nil
 }
 
-func AddNote(db *sql.DB, name string, contents string, t time.Time) error {
+func AddNote(db *sql.DB, name string, contents string, t time.Time) (int64, error) {
 	insertQuery := `INSERT INTO notes(name, created_at) VALUES (?, ?)`
 	stmt, err := db.Prepare(insertQuery)
 	if err != nil {
-		return err
+		return -1, err
 	}
 
 	res, err := stmt.Exec(name, t.Format(dateLayout))
 	if err != nil {
-		return err
+		return -1, err
 	}
 
 	id, err := res.LastInsertId()
 	if err != nil {
-		return err
+		return -1, err
 	}
 
 	insertContentsQuery := `INSERT INTO notes_contents (note_id, contents) VALUES (?, ?)`
 	stmt, err = db.Prepare(insertContentsQuery)
 	if err != nil {
-		return err
+		return id, err
 	}
 
 	_, err = stmt.Exec(id, contents)
 
-	return err
+	return id, err
 }
 
 func AppendNote(db *sql.DB, note string, contents string) error {

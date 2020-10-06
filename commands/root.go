@@ -26,14 +26,13 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
-	"path"
 
+	d "github.com/csixteen/clerk/internal/database"
 	"github.com/spf13/cobra"
 )
 
 var (
 	database *sql.DB
-	dbFile   string
 
 	RootCmd = &cobra.Command{
 		Use:   "clerk",
@@ -44,13 +43,7 @@ var (
 func init() {
 	var err error
 
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		panic(err)
-	}
-	dbFile = path.Join(homeDir, ".clerk.db")
-
-	database, err = setupDatabase()
+	database, err = d.SetupDatabase()
 	if err != nil {
 		panic(err)
 	}
@@ -70,84 +63,4 @@ func Execute() {
 		fmt.Println(err)
 		os.Exit(-1)
 	}
-}
-
-//-------------------------------------------
-//         Database related stuff
-
-func setupDatabase() (*sql.DB, error) {
-	var err error
-
-	if _, err := os.Stat(dbFile); os.IsNotExist(err) {
-		file, err := os.Create(dbFile)
-		if err != nil {
-			return nil, err
-		}
-		file.Close()
-	}
-
-	db, _ := sql.Open(
-		"sqlite3",
-		fmt.Sprintf("%s?_foreign_keys=true", dbFile),
-	)
-	err = createTables(db)
-	if err != nil {
-		return nil, err
-	}
-
-	return db, nil
-}
-
-func createTables(db *sql.DB) error {
-	// Tasks table
-	createTasksTable := `CREATE TABLE IF NOT EXISTS tasks (
-		id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-		name VARCHAR(64),
-		contents TEXT,
-		created_at VARCHAR(64),
-		completed_at VARCHAR(64)
-	);`
-
-	stmt, err := db.Prepare(createTasksTable)
-	if err != nil {
-		return err
-	}
-	_, err = stmt.Exec()
-	if err != nil {
-		return err
-	}
-
-	// Notes table
-	createNotesTable := `CREATE TABLE IF NOT EXISTS notes (
-		id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-		name VARCHAR(64),
-		created_at VARCHAR(64)
-	);`
-
-	stmt, err = db.Prepare(createNotesTable)
-	if err != nil {
-		return err
-	}
-	_, err = stmt.Exec()
-	if err != nil {
-		return err
-	}
-
-	// Notes-Contents table
-	createNotesContentsTable := `CREATE TABLE IF NOT EXISTS notes_contents (
-		note_id INTEGER NOT NULL,
-		contents TEXT,
-		FOREIGN KEY (note_id)
-			REFERENCES notes (id)
-				ON DELETE CASCADE
-	);`
-
-	stmt, err = db.Prepare(createNotesContentsTable)
-	if err != nil {
-		return err
-	}
-
-	_, err = stmt.Exec()
-
-	return err
 }
