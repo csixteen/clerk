@@ -18,15 +18,24 @@
 // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
+// SOFTWARE
 
 package main
 
 import (
 	"github.com/csixteen/clerk/app/clerk-api/broker"
+	"github.com/csixteen/clerk/app/clerk-api/routes"
 )
 
-func main() {
-	b := broker.New()
-	b.Start(BuildPipeline)
+// BuildPipeline responsible for binding all the routes to the
+// corresponding handlers
+func BuildPipeline(b *broker.Broker) {
+	var allRoutes []*routes.Route
+
+	allRoutes = append(allRoutes, routes.NotesRoutes(b.Db)...)
+	allRoutes = append(allRoutes, routes.TasksRoutes(b.Db)...)
+
+	for _, r := range allRoutes {
+		b.Router.HandleFunc(r.Path, r.Handler).Methods(r.Method)
+	}
 }

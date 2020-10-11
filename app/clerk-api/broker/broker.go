@@ -31,7 +31,6 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/csixteen/clerk/app/clerk-api/routes"
 	d "github.com/csixteen/clerk/internal/database"
 	"github.com/gorilla/mux"
 )
@@ -39,9 +38,9 @@ import (
 // Broker responsible for binding the business logic of
 // managing tasks and notes with the HTTP logic
 type Broker struct {
-	db *sql.DB
+	Db *sql.DB
 
-	router *mux.Router
+	Router *mux.Router
 }
 
 func New() *Broker {
@@ -53,33 +52,20 @@ func New() *Broker {
 	r := mux.NewRouter().StrictSlash(true)
 
 	b := &Broker{
-		router: r,
-		db:     db,
+		Router: r,
+		Db:     db,
 	}
 
 	return b
 }
 
-func (b *Broker) addRoutes() {
-	var allRoutes []*routes.Route
-
-	allRoutes = append(allRoutes, routes.TasksRoutes(b.db)...)
-	allRoutes = append(allRoutes, routes.NotesRoutes(b.db)...)
-
-	for _, route := range allRoutes {
-		b.router.HandleFunc(route.Path, route.Handler).Methods(route.Method)
-	}
-}
-
-// Start starts serving HTTP requests to incoming connections
-// on the configured port to the predefined routes.
-func (b *Broker) Start() {
+func (b *Broker) Start(binder func(b *Broker)) {
 	log.Println("Starting the broker. Listening on port 8888...")
 
-	b.addRoutes()
+	binder(b)
 
 	srv := &http.Server{
-		Handler: b.router,
+		Handler: b.Router,
 		Addr:    "127.0.0.1:8888",
 	}
 

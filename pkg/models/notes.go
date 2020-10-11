@@ -68,6 +68,8 @@ func (n *NoteModel) Type() string {
 	return "note"
 }
 
+// ListNotes lists all the existing notes. The displayed
+// fields are the note `id`, the note `name` and `created_at`.
 func ListNotes(db *sql.DB) ([]*NoteModel, error) {
 	rows, err := db.Query(`SELECT
 		id, name, created_at FROM notes

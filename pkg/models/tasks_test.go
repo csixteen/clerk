@@ -75,10 +75,11 @@ func TestAddTask(t *testing.T) {
 	prep := mock.ExpectPrepare(query)
 	prep.ExpectExec().WithArgs(
 		"test", "test contents", created.Format(dateLayout),
-	).WillReturnResult(sqlmock.NewResult(0, 1))
+	).WillReturnResult(sqlmock.NewResult(1, 1))
 
-	err := AddTask(db, "test", "test contents", created)
+	id, err := AddTask(db, "test", "test contents", created)
 	assert.NoError(t, err)
+	assert.Equal(t, int64(1), id)
 
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)
