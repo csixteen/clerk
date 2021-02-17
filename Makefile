@@ -1,5 +1,4 @@
 BIN_NAME=clerk-cli
-SERVER_NAME=clerk-server
 
 .PHONY: test
 test:
@@ -7,7 +6,4 @@ test:
 
 .PHONY:
 bin:
-	go build -o $(BIN_NAME) cmd/clerk/*.go
-
-server:
-	go build -o $(SERVER_NAME) app/clerk-api/*.go
+	CGO_ENABLED=0 go build -o $(BIN_NAME) cmd/clerk/*.go
